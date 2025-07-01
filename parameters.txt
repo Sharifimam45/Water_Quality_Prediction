@@ -1,21 +1,52 @@
-Model: MultiOutputRegressor with RandomForestRegressor
+Model: Random Forest Regressor
+Purpose: Predict BSK5 (Biochemical Oxygen Demand) from historical pollutant data
 
-RandomForestRegressor Parameters:
----------------------------------
-n_estimators      : 100
-max_depth         : None
-min_samples_split : 2
-min_samples_leaf  : 1
-bootstrap         : True
-random_state      : 42
-n_jobs            : -1
-
-Train/Test Split:
------------------
-test_size         : 0.2
-random_state      : 42
+Dataset:
+---------
+Source: water_quality.csv
+Date Format: DD.MM.YYYY
+Features: 
+- Pollutants: NH4, Suspended, O2, NO3, NO2, SO4, PO4, CL
+- Temporal: date, year, month
+- Location: id (station)
 
 Preprocessing:
 --------------
-Encoding          : One-Hot Encoding on 'id' column
-Feature Scaling   : Not applied
+- Sort by id and date
+- Forward fill missing values
+- Extract month and year from date
+
+Feature Engineering:
+---------------------
+- Lag features for NH4, Suspended, O2, NO3, NO2, SO4, PO4, CL
+- Lags used: 1, 2, 3 days
+- Resulting in 24 lag features
+- Additional features: id, month, year
+
+Train-Test Split:
+------------------
+- Type: Time-based split
+- Train Size: 80%
+- Test Size: 20%
+- Split based on date order
+
+Model Parameters:
+------------------
+Algorithm: RandomForestRegressor
+n_estimators: 200
+max_depth: None (default)
+min_samples_split: 2 (default)
+min_samples_leaf: 1 (default)
+bootstrap: True
+random_state: 42
+n_jobs: default (not explicitly set)
+
+Evaluation:
+------------
+- Mean Squared Error (MSE)
+- R² Score
+
+Visualization:
+---------------
+- Line plot comparing actual vs predicted BSK5
+
